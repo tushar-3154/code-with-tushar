@@ -3,19 +3,44 @@ const express = require("express");
 const router = express.Router();
 
 const admincontroller = require("../controllers/admin");
+const isAuth = require('../middleware/is-auth');
+const { check, body } = require('express-validator');
 
 // /admin/add-product => GET
-router.get("/add-product", admincontroller.getaddproduct);
+router.get("/add-product", isAuth, admincontroller.getaddproduct);
 
-// /admin/products =>GET
-router.get("/products", admincontroller.getproducts);
+// // /admin/products =>GET
+router.get("/products", isAuth, admincontroller.getproducts);
 
-// /admin/add-product =>POST
-router.post("/add-product", admincontroller.postAddproduct);
+// // /admin/add-product =>POST
+router.post("/add-product", [
+    body('title')
+        .isString()
+        .isLength({ min: 3 })
 
-router.get("/edit-product/:productId", admincontroller.geteditproduct);
+        .trim(),
 
-router.post("/edit-product", admincontroller.posteditproduct);
+    body('price').isFloat(),
+    body('description')
+        .isLength({ min: 5, max: 400 })
+        .trim(),
+], isAuth, admincontroller.postAddproduct);
 
-router.post("/delete-product", admincontroller.postdeleteproduct);
+router.get("/edit-product/:productId", isAuth, admincontroller.geteditproduct);
+
+router.post("/edit-product", [
+    body('title')
+        .isAlphanumeric()
+        .isLength({ min: 3 })
+
+        .trim(),
+    body('imageUrl')
+        .isURL(),
+    body('price').isFloat(),
+    body('description')
+        .isLength({ min: 5, max: 400 })
+        .trim(),
+], isAuth, admincontroller.posteditproduct);
+
+router.delete("/product/:productId", isAuth, admincontroller.deleteproduct);
 module.exports = router;

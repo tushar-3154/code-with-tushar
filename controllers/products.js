@@ -15,13 +15,13 @@ exports.getaddproduct = (req, res, next) => {
 
 exports.postaddproduct = (req, res, next) => {
   // products.push({ title: req.body.title });
-  const product = new Product(req.body.title);
+  const product = new product(req.body.title);
   product.save();
   res.redirect("/");
 };
 
 exports.getproduct = (req, res, next) => {
-  product.fetchAll((products) => {
+  product.fetchall((products) => {
     res.render("shop/product-list", {
       prods: products,
       pagetitle: "Shop",
